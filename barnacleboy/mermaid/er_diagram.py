@@ -101,10 +101,10 @@ class EntityRelationDiagram(MermaidBase):
         self.entities = entities if entities else []
         self.relationships = relationships if relationships else []
 
-    def add_entity(self, *args, **kwargs):
+    def add_entity(self, *args, **kwargs) -> None:
         self.entities.append(Entity(*args, **kwargs))
 
-    def add_relationship(self, *args, **kwargs):
+    def add_relationship(self, *args, **kwargs) -> None:
         self.relationships.append(Relationship(*args, **kwargs))
 
     def __str__(self) -> str:
