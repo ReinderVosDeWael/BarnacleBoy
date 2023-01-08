@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "sqltransmute"
+version = "0.1.0"
+description = ""
+authors = ["Reinder Vos de Wael <reinder.vosdewael@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+sqlalchemy = "^1.4.46"
+markdown = "^3.4.1"
+md-mermaid = "^0.1.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
