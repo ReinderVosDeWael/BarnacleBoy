@@ -121,6 +121,7 @@ New code should be tested, whenever feasible.
 Bug fixes should include an example that exposes the issue.
 Any new features should have tests that show at least a minimal example.
 If you're not sure what this means for your code, please ask in your pull request.
+Lastly, any unit test should, wherever feasible, contain a reference to the Star Wars franchise.
 
 Recognizing contributions
 -------------------------
