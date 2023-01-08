@@ -1,6 +1,6 @@
 """ Module for building mermaid flowcharts. """
 from enum import Enum
-from typing import List, Union, Optional
+from typing import List, Optional, Any
 
 from barnacleboy.mermaid.base import MermaidBase
 from barnacleboy.mermaid.utils import generate_node_ids
@@ -71,7 +71,7 @@ class Node:
         """The string representation of the node."""
         return self.internal_id + self.shape.value.replace("$1", self.name)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.node_string
 
 
@@ -121,11 +121,11 @@ class Relationship:
         return output_string
 
     @property
-    def relationship_string(self):
+    def relationship_string(self) -> str:
         """Property for accessing the relationship string of a node."""
         return self.get_relationship_string()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.relationship_string
 
 
@@ -134,8 +134,8 @@ class Flowchart(MermaidBase):
 
     def __init__(
         self,
-        nodes: List[Node] = None,
-        relationships: List[Relationship] = None,
+        nodes: Optional[List[Node]] = None,
+        relationships: Optional[List[Relationship]] = None,
         orientation: Orientation = Orientation.TB,
         title: Optional[str] = None,
     ):
@@ -155,7 +155,7 @@ class Flowchart(MermaidBase):
 
         self.set_node_ids()
 
-    def create_node(self, *args, **kwargs) -> Node:
+    def create_node(self, *args: Any, **kwargs: Any) -> Node:
         """Create a node.
 
         Args:
@@ -169,7 +169,7 @@ class Flowchart(MermaidBase):
         self.add_nodes([node])
         return node
 
-    def create_relationship(self, *args, **kwargs) -> Relationship:
+    def create_relationship(self, *args: Any, **kwargs: Any) -> Relationship:
         """Create a relationship between two nodes.
 
         Args:
@@ -184,7 +184,7 @@ class Flowchart(MermaidBase):
         self.add_relationships([relationship])
         return relationship
 
-    def add_nodes(self, nodes: Union[List[Node], Node]) -> None:
+    def add_nodes(self, nodes: List[Node]) -> None:
         """Add a list of nodes to the flowchart.
 
         Args:
@@ -194,9 +194,7 @@ class Flowchart(MermaidBase):
             self.nodes.append(node)
         self.set_node_ids()
 
-    def add_relationships(
-        self, relationships: Union[List[Relationship], Relationship]
-    ) -> None:
+    def add_relationships(self, relationships: List[Relationship]) -> None:
         """Add a relationship between two nodes.
 
         Args:
@@ -238,5 +236,5 @@ class Flowchart(MermaidBase):
 
         return output_string
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.get_flowchart_string()

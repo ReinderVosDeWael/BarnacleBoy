@@ -13,7 +13,7 @@ class Task:
     rating: int
     people: List[str]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Get a string representation of the object."""
         return f"{self.description}: {self.rating}: {', '.join(self.people)}"
 
@@ -21,7 +21,7 @@ class Task:
 class Section:
     """A section in a user journey."""
 
-    def __init__(self, title: str, tasks: Optional[List[Task]] = None):
+    def __init__(self, title: str, tasks: Optional[List[Task]] = None) -> None:
         """Initialize a section.
 
         Args:
@@ -31,7 +31,7 @@ class Section:
         self.title = title
         self.tasks = tasks if tasks else []
 
-    def add_task(self, description, rating, people) -> None:
+    def add_task(self, description: str, rating: int, people: list[str]) -> None:
         """Append a task to the section.
 
         Args:
@@ -65,7 +65,7 @@ class UserJourney(MermaidBase):
         self.title = title
         self.sections = sections if sections else []
 
-    def add_section(self, title: str, tasks: Optional[List[Task]] = None):
+    def add_section(self, title: str, tasks: Optional[List[Task]] = None) -> None:
         """Add a section to the user journey.
 
         Args:
@@ -74,7 +74,7 @@ class UserJourney(MermaidBase):
         """
         self.sections.append(Section(title, tasks))
 
-    def get_user_journey_string(self):
+    def get_user_journey_string(self) -> str:
         """Get a string representation of the object."""
         output_string = "journey\n"
         output_string += f"title {self.title}\n"
@@ -82,5 +82,5 @@ class UserJourney(MermaidBase):
             output_string += str(section)
         return output_string
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.get_user_journey_string()
