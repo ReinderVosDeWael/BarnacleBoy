@@ -1,9 +1,10 @@
 """ Module for building mermaid flowcharts. """
+import dataclasses
 from enum import Enum
-from typing import List, Optional, Any
+from typing import List, Optional, Any, Union
 
 from barnacleboy.mermaid.base import MermaidBase
-from barnacleboy.mermaid.utils import generate_node_ids
+from barnacleboy.mermaid.utils import generate_internal_ids
 
 
 class Orientation(Enum):
@@ -11,9 +12,6 @@ class Orientation(Enum):
 
     TB: str = "TB"
     TOP_BOTTOM: str = "TB"
-
-    TD: str = "TD"
-    TOP_DOWN: str = "TD"
 
     BT: str = "BT"
     BOTTOM_TOP: str = "BT"
@@ -26,7 +24,7 @@ class Orientation(Enum):
 
 
 class RelationshipStyles(Enum):
-    """The type of relationship between two nodes."""
+    """The type of relationship between two entities."""
 
     SOLID: str = "---"
     DOTTED: str = "-.-"
@@ -51,36 +49,61 @@ class NodeShape(Enum):
     DOUBLE_CIRCLE: str = "((($1)))"
 
 
+@dataclasses.dataclass
 class Node:
-    """A node in a flowchart."""
+    """A node in a flowchart.
 
-    def __init__(self, name: str, shape: NodeShape = NodeShape.ROUNDED):
-        """Initialize a node.
+    Args:
+        name: The name of the node.
+        shape: The shape of the node.
 
-        Args:
-            name: The name of the node.
-            shape: The shape of the node.
+    """
 
-        """
-        self.name = name
-        self.shape = shape
-        self.internal_id: str = ""
-
-    @property
-    def node_string(self) -> str:
-        """The string representation of the node."""
-        return self.internal_id + self.shape.value.replace("$1", self.name)
+    name: str
+    shape: NodeShape = NodeShape.ROUNDED
+    _internal_id: str = ""
 
     def __str__(self) -> str:
-        return self.node_string
+        return self._internal_id + self.shape.value.replace("$1", self.name)
+
+
+class Subgraph:
+    """A subgraph in a flowchart.
+
+    Args:
+        name: The name of the subgraph.
+        nodes: The entities in the subgraph.
+
+    """
+
+    def __init__(self, name: str, nodes: List[Union[Node, "Subgraph"]]) -> None:
+        self.name = name
+        self.entities = nodes
+        self._internal_id: str = ""
+        self.direction: str = Orientation.TOP_BOTTOM.value
+
+    def __str__(self) -> str:
+        output_string = f"subgraph {self._internal_id} [{self.name}]\n"
+        output_string += f"direction {self.direction}\n"
+        nodes = [entity for entity in self.entities if isinstance(entity, Node)]
+        subgraphs = [entity for entity in self.entities if isinstance(entity, Subgraph)]
+
+        for node in nodes:
+            output_string += f"{node}\n"
+
+        for subgraph in subgraphs:
+            output_string += f"{subgraph}\n"
+
+        output_string += "end\n"
+        return output_string
 
 
 class Relationship:
-    """A relationship between two nodes."""
+    """A relationship between two entities."""
 
     def __init__(
         self,
-        nodes: List[Node],
+        entities: List[Union[Node, Subgraph]],
         *,
         style: str = "SOLID",
         input_arrow: Optional[str] = None,
@@ -90,25 +113,25 @@ class Relationship:
         """Initialize a relationship.
 
         Args:
-            nodes: The nodes to connect.
+            entities: The entities/subgraphs to connect.
             style: The style of the relationship.
             input_arrow: The input arrow, valid values are "<", "o", "x"
             output_arrow: The output arrow, valid values are ">", "o", "x"
             label: The label of the relationship.
         """
-        self.nodes = nodes
+        self.entities = entities
         self.style = style
         self.input_arrow = input_arrow
         self.output_arrow = output_arrow
         self.label = label
 
-        if len(self.nodes) != 2:
-            raise ValueError("A relationship must have exactly two nodes.")
+        if len(self.entities) != 2:
+            raise ValueError("A relationship must have exactly two entities.")
 
-    def get_relationship_string(self) -> str:
-        """Generate a relationship string for a node."""
+    def __str__(self) -> str:
+        """Generate a relationship string."""
         output_string = ""
-        output_string += self.nodes[0].internal_id
+        output_string += self.entities[0]._internal_id
         if self.input_arrow:
             output_string += self.input_arrow
         output_string += RelationshipStyles[self.style].value
@@ -116,17 +139,9 @@ class Relationship:
             output_string += self.output_arrow
         if self.label:
             output_string += f"|{self.label}|"
-        output_string += self.nodes[1].internal_id
+        output_string += self.entities[1]._internal_id
 
         return output_string
-
-    @property
-    def relationship_string(self) -> str:
-        """Property for accessing the relationship string of a node."""
-        return self.get_relationship_string()
-
-    def __str__(self) -> str:
-        return self.relationship_string
 
 
 class Flowchart(MermaidBase):
@@ -136,24 +151,26 @@ class Flowchart(MermaidBase):
         self,
         nodes: Optional[List[Node]] = None,
         relationships: Optional[List[Relationship]] = None,
-        orientation: Orientation = Orientation.TB,
+        subgraphs: Optional[List[Subgraph]] = None,
+        orientation: str = Orientation.TB.value,
         title: Optional[str] = None,
     ):
         """Initialize a flowchart.
 
         Args:
-            nodes: A list of nodes in the flowchart.
-            relationships: A list of relationships between nodes in the flowchart.
+            nodes: A list of entities in the flowchart.
+            relationships: A list of relationships between entities in the flowchart.
             orientation: The orientation of the flowchart, defaults to "TB".
             title: The title of the flowchart.
 
         """
         self.nodes = nodes or []
         self.relationships = relationships or []
+        self.subgraphs = subgraphs or []
         self.orientation = orientation
         self.title = title
 
-        self.set_node_ids()
+        self.set_internal_ids()
 
     def create_node(self, *args: Any, **kwargs: Any) -> Node:
         """Create a node.
@@ -170,7 +187,7 @@ class Flowchart(MermaidBase):
         return node
 
     def create_relationship(self, *args: Any, **kwargs: Any) -> Relationship:
-        """Create a relationship between two nodes.
+        """Create a relationship between two entities.
 
         Args:
             *args: Positional arguments to pass to the Relationship constructor.
@@ -184,50 +201,88 @@ class Flowchart(MermaidBase):
         self.add_relationships([relationship])
         return relationship
 
-    def add_nodes(self, nodes: List[Node]) -> None:
-        """Add a list of nodes to the flowchart.
+    def create_subgraph(self, *args: Any, **kwargs: Any) -> Subgraph:
+        """Create a subgraph.
 
         Args:
-            nodes: A list of nodes to add to the flowchart.
+            *args: Positional arguments to pass to the Subgraph constructor.
+            **kwargs: Keyword arguments to pass to the Subgraph constructor.
+
+        Returns:
+            The created subgraph.
+
+        """
+        subgraph = Subgraph(*args, **kwargs)
+        for existing_subgraph in self.subgraphs:
+            for entity in subgraph.entities:
+                if entity in existing_subgraph.entities:
+                    raise ValueError(
+                        "Cannot add a subgraph with entities that are already in another subgraph."
+                    )
+        self.add_subgraphs([subgraph])
+        return subgraph
+
+    def add_nodes(self, nodes: List[Node]) -> None:
+        """Add a list of entities to the flowchart.
+
+        Args:
+            nodes: A list of entities to add to the flowchart.
         """
         for node in nodes:
             self.nodes.append(node)
-        self.set_node_ids()
+        self.set_internal_ids()
 
     def add_relationships(self, relationships: List[Relationship]) -> None:
-        """Add a relationship between two nodes.
+        """Add many relationships.
 
         Args:
-            relationships: Relationships between the two nodes.
+            relationships: Relationships between the two entities.
 
         """
         for relationship in relationships:
-            if len(relationship.nodes) != 2:
-                raise ValueError("A relationship must have exactly two nodes.")
+            if len(relationship.entities) != 2:
+                raise ValueError("A relationship must have exactly two entities.")
 
-            for node in relationship.nodes:
+            for node in relationship.entities:
                 if node not in self.nodes:
                     raise ValueError(
-                        "Relationships must be between nodes in the flowchart."
+                        "Relationships must be between entities in the flowchart."
                     )
 
         self.relationships += relationships
 
-    def set_node_ids(self) -> None:
-        """Set the internal IDs of the nodes."""
-        node_ids = generate_node_ids(len(self.nodes))
-        for node, node_id in zip(self.nodes, node_ids):
-            node.internal_id = node_id
+    def add_subgraphs(self, subgraphs: List[Subgraph]) -> None:
+        """Add many subgraphs.
+
+        Args:
+            subgraphs: Subgraphs to add to the flowchart.
+
+        """
+        self.subgraphs += subgraphs
+        self.set_internal_ids()
+
+    def set_internal_ids(self) -> None:
+        """Set the internal IDs of the entities."""
+        ids = generate_internal_ids(len(self.nodes) + len(self.subgraphs))
+        entities = self.nodes + self.subgraphs
+        for entity, entity_id in zip(entities, ids):
+            entity._internal_id = entity_id
 
     def get_flowchart_string(self) -> str:
         """Generate a flowchart string."""
         output_string = ""
         if self.title:
             output_string += f"---\ntitle: {self.title}\n---\n"
-        output_string += f"graph {self.orientation.value}\n"
+        output_string += f"graph {self.orientation}\n"
 
-        for node in self.nodes:
-            output_string += f"    {node}\n"
+        # Remove nodes/subgraphs that are in subgraphs
+        entities = self.nodes + self.subgraphs
+        for subgraph in self.subgraphs:
+            for entity in subgraph.entities:
+                if entity in entities:
+                    entities.remove(entity)
+        for entity in entities:
+            output_string += f"    {entity}\n"
 
         output_string += "\n"
 
