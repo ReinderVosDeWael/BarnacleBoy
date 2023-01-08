@@ -25,9 +25,10 @@ jobs:
         run: |
           pip install poetry
           poetry install
-          poetry run python3 -m pytest --cov-report xml:coverage.xml .
+          poetry run python3 -m pytest --cov barnacleboy --cov-report xml:coverage.xml .
 
       - name: Get Coverage
+        if: ${{ matrix.python-version == '3.11' }}
         uses: orgoro/coverage@v3
         with:
           coverageFile: coverage.xml
