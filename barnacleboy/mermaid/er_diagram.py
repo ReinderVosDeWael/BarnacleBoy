@@ -14,10 +14,53 @@ class RelationshipType(Enum):
     ONE_OR_MORE: Tuple[str, str] = ("}|", "|{")
 
 
+class Field:
+    """An entity attribute."""
+
+    def __init__(
+        self,
+        vartype: str,
+        name: str,
+        description: Optional[str] = None,
+        primary_key: bool = False,
+        foreign_key: bool = False,
+    ) -> None:
+        """Initialize an entity attribute.
+
+        Args:
+            vartype: The type of the attribute.
+            name: The name of the attribute.
+            description: The description of the attribute.
+            primary_key: Whether the attribute is a primary key.
+            foreign_key: Whether the attribute is a foreign key.
+        """
+        if primary_key and foreign_key:
+            raise ValueError(
+                "An attribute cannot be both a primary key and a foreign key."
+            )
+
+        self.vartype = vartype
+        self.name = name
+        self.description = description
+        self.primary_key = primary_key
+        self.foreign_key = foreign_key
+
+    def __str__(self) -> str:
+        """Get a string representation of the object."""
+        output_string = f"  {self.vartype} {self.name}"
+        if self.primary_key:
+            output_string += " PK"
+        if self.foreign_key:
+            output_string += " FK"
+        if self.description:
+            output_string += f' "{self.description}"'
+        return output_string
+
+
 @dataclasses.dataclass
 class Entity:
     name: str
-    attributes: Optional[List[Tuple[str, str]]] = None
+    attributes: Optional[List[Field]] = None
 
     def __str__(self) -> str:
         if not self.attributes:
@@ -25,7 +68,7 @@ class Entity:
 
         output_string = self.name + " {\n"
         for attribute in self.attributes:
-            output_string += f"  {attribute[0]} {attribute[1]}\n"
+            output_string += f"{attribute}\n"
         output_string += "}\n"
         return output_string
 
