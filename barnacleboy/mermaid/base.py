@@ -1,8 +1,9 @@
 from pathlib import Path
+from typing import Union
 
 
 class MermaidBase:
-    def save_html(self, filename: str | Path) -> None:
+    def save_html(self, filename: Union[str, Path]) -> None:
         filename = Path(filename)
         content = f"""
 <!DOCTYPE html>

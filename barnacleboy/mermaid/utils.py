@@ -1,10 +1,10 @@
 import itertools
 import math
 from string import ascii_uppercase
-from typing import Generator
+from typing import Generator, Union
 
 
-def next_power(target, base=2) -> int:
+def next_power(target: Union[int, float], base: Union[int, float] = 2) -> int:
     """Return the next power of base that is greater than or equal to target.
 
     Args:
