@@ -1,6 +1,6 @@
 """ Module for building mermaid flowcharts. """
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Optional
 
 from src.mermaid.base import MermaidBase
 from src.mermaid.utils import generate_node_ids
@@ -82,24 +82,24 @@ class Relationship:
         self,
         nodes: List[Node],
         *,
-        style="SOLID",
-        arrow_input=False,
-        arrow_output=True,
-        label=None,
-    ):
+        style: str = "SOLID",
+        input_arrow: Optional[str] = None,
+        output_arrow: Optional[str] = None,
+        label: Optional[str] = None,
+    ) -> None:
         """Initialize a relationship.
 
         Args:
             nodes: The nodes to connect.
             style: The style of the relationship.
-            arrow_input: Whether to add an arrow to the input node.
-            arrow_output: Whether to add an arrow to the output node.
+            input_arrow: The input arrow, valid values are "<", "o", "x"
+            output_arrow: The output arrow, valid values are ">", "o", "x"
             label: The label of the relationship.
         """
         self.nodes = nodes
         self.style = style
-        self.arrow_input = arrow_input
-        self.arrow_output = arrow_output
+        self.input_arrow = input_arrow
+        self.output_arrow = output_arrow
         self.label = label
 
         if len(self.nodes) != 2:
@@ -109,11 +109,11 @@ class Relationship:
         """Generate a relationship string for a node."""
         output_string = ""
         output_string += self.nodes[0].internal_id
-        if self.arrow_input:
-            output_string += "<"
+        if self.input_arrow:
+            output_string += self.input_arrow
         output_string += RelationshipStyles[self.style].value
-        if self.arrow_output:
-            output_string += ">"
+        if self.output_arrow:
+            output_string += self.output_arrow
         if self.label:
             output_string += f"|{self.label}|"
         output_string += self.nodes[1].internal_id
@@ -137,6 +137,7 @@ class Flowchart(MermaidBase):
         nodes: List[Node] = None,
         relationships: List[Relationship] = None,
         orientation: Orientation = Orientation.TB,
+        title: Optional[str] = None,
     ):
         """Initialize a flowchart.
 
@@ -144,11 +145,13 @@ class Flowchart(MermaidBase):
             nodes: A list of nodes in the flowchart.
             relationships: A list of relationships between nodes in the flowchart.
             orientation: The orientation of the flowchart, defaults to "TB".
+            title: The title of the flowchart.
 
         """
         self.nodes = nodes or []
         self.relationships = relationships or []
         self.orientation = orientation
+        self.title = title
 
         self.set_node_ids()
 
@@ -220,15 +223,18 @@ class Flowchart(MermaidBase):
 
     def get_flowchart_string(self) -> str:
         """Generate a flowchart string."""
-        output_string = f"graph {self.orientation.value}"
+        output_string = ""
+        if self.title:
+            output_string += f"---\ntitle: {self.title}\n---\n"
+        output_string += f"graph {self.orientation.value}\n"
 
         for node in self.nodes:
-            output_string += f"\n    {node}"
+            output_string += f"    {node}\n"
 
         output_string += "\n"
 
         for relationship in self.relationships:
-            output_string += f"\n    {relationship}"
+            output_string += f"    {relationship}\n"
 
         return output_string
 

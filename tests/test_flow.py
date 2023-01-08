@@ -30,7 +30,8 @@ def test_flowchart():
     assert flowchart.nodes == [anakin, vader]
     assert flowchart.relationships == [relationship]
     assert flowchart.orientation == Orientation.TB
+
     assert (
         str(flowchart)
-        == "graph TB\n    A(Anakin Skywalker)\n    B(Darth Vader)\n\n    A--->|Turns to the dark side|B"
+        == "graph TB\n    A(Anakin Skywalker)\n    B(Darth Vader)\n\n    A---|Turns to the dark side|B\n"
     )
