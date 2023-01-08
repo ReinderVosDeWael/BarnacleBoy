@@ -1,6 +1,6 @@
 import dataclasses
 from enum import Enum
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Any
 
 from barnacleboy.mermaid.base import MermaidBase
 
@@ -101,10 +101,10 @@ class EntityRelationDiagram(MermaidBase):
         self.entities = entities if entities else []
         self.relationships = relationships if relationships else []
 
-    def add_entity(self, *args, **kwargs) -> None:
+    def add_entity(self, *args: Any, **kwargs: Any) -> None:
         self.entities.append(Entity(*args, **kwargs))
 
-    def add_relationship(self, *args, **kwargs) -> None:
+    def add_relationship(self, *args: Any, **kwargs: Any) -> None:
         self.relationships.append(Relationship(*args, **kwargs))
 
     def __str__(self) -> str:
