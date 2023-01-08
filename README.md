@@ -1,12 +1,12 @@
 # BarnacleBoy
 
-Welcome to the documentation of BarnacleBoy, the Python tool for making Mermaid diagrams. 
+Welcome to the documentation of BarnacleBoy, the Python tool for making Mermaid diagrams.
 
-This project is still in very early stage of development, so expect anything and everything to change. 
+This project is still in very early stage of development, so expect anything and everything to change.
 But here's just an early teaser of what will be possible in the near future:
 
 ```python
-from src.mermaid.flowchart import Flowchart
+from barnacleboy.mermaid.flowchart import Flowchart
 
 flowchart = Flowchart()
 anakin = flowchart.create_node("Anakin Skywalker")
@@ -16,6 +16,7 @@ relationship = flowchart.create_relationship(
 )
 flowchart.save_html("unnatural_powers.html")
 ```
+
 results in an `html` file containing the following diagram:
 
 ```mermaid

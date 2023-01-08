@@ -1,4 +1,10 @@
-from src.mermaid.flowchart import Flowchart, Node, Orientation, NodeShape, Relationship
+from barnacleboy.mermaid.flowchart import (
+    Flowchart,
+    Node,
+    Orientation,
+    NodeShape,
+    Relationship,
+)
 
 
 def test_create_node():

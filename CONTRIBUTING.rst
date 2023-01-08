@@ -1,4 +1,4 @@
-Contributing to BrainStat
+Contributing to BarnacleBoy
 =========================
 
 .. start-marker-cont
@@ -127,7 +127,7 @@ Recognizing contributions
 -------------------------
 I welcome and recognize all contributions from documentation to testing to code development.
 
-The development team member who accepts/merges your pull request will include your name in in the list of contributors. 
+The development team member who accepts/merges your pull request will include your name in in the list of contributors.
 
 **Thank you! You're awesome.**
 

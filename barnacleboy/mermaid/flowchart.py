@@ -2,8 +2,8 @@
 from enum import Enum
 from typing import List, Union, Optional
 
-from src.mermaid.base import MermaidBase
-from src.mermaid.utils import generate_node_ids
+from barnacleboy.mermaid.base import MermaidBase
+from barnacleboy.mermaid.utils import generate_node_ids
 
 
 class Orientation(Enum):
