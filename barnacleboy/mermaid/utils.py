@@ -24,19 +24,19 @@ def next_power(target: Union[int, float], base: Union[int, float] = 2) -> int:
     return int(math.ceil(math.log(target, base)))
 
 
-def generate_node_ids(n_nodes: int) -> Generator[str, None, None]:
+def generate_internal_ids(n_nodes: int) -> Generator[str, None, None]:
     """Generate a list of node ids using the alphabet.
 
     Args:
-        n_nodes: The number of nodes to generate ids for.
+        n_nodes: The number of entities to generate ids for.
 
     Returns:
         A generator of node ids.
 
     Examples:
-        >>> list(generate_node_ids(5))
+        >>> list(generate_internal_ids(5))
         ['A', 'B', 'C', 'D', 'E']
-        >>> list(generate_node_ids(27))
+        >>> list(generate_internal_ids(27))
         ['AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR',
         'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA']
 
