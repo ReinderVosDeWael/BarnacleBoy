@@ -32,7 +32,7 @@ class Section:
         self.title = title
         self.tasks = tasks if tasks else []
 
-    def add_task(self, description: str, rating: int, people: list[str]) -> None:
+    def add_task(self, description: str, rating: int, people: List[str]) -> None:
         """Append a task to the section.
 
         Args:

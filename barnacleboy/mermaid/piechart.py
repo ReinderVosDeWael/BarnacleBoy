@@ -1,11 +1,11 @@
-from typing import Any
+from typing import Any, Dict
 
 from barnacleboy.mermaid.base import MermaidBase
 from barnacleboy.mermaid.utils import init_string
 
 
 class Piechart(MermaidBase):
-    def __init__(self, title: str, data: dict[str, int], **kwargs: Any) -> None:
+    def __init__(self, title: str, data: Dict[str, int], **kwargs: Any) -> None:
         """Initialize a piechart.
 
         Args:
