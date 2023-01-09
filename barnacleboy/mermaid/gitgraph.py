@@ -106,7 +106,7 @@ class GitGraph(MermaidBase):
         self.rotate_commit_label = rotate_commit_label
         self.main_branch_name = main_branch_name
         self.main_branch_order = main_branch_order
-        self.config = {}
+        self.config = {}  # type: ignore
 
     def commit(
         self,

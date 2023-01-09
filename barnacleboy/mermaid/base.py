@@ -1,6 +1,6 @@
 import base64
 from pathlib import Path
-from typing import Union, Optional
+from typing import Union, Optional, Any
 
 from pydantic import Field, BaseModel, Extra
 
@@ -46,7 +46,7 @@ class ThemeVariables(BaseModel):
 class MermaidBase:
     """Base class for mermaid objects. Provides methods for saving and rendering."""
 
-    def __init__(self, theme: str = "base", **kwargs) -> None:
+    def __init__(self, theme: str = "base", **kwargs: Any) -> None:
         """Initialize a mermaid object."""
         if theme not in VALID_THEMES:
             raise ValueError(f"Theme {theme} is not supported.")
@@ -80,7 +80,7 @@ class MermaidBase:
         with open(filename, "w") as file:
             file.write(html)
 
-    def jupyter_plot(self):
+    def jupyter_plot(self) -> None:
         """Render the graph in a Jupyter notebook.
 
         Notes:
@@ -96,7 +96,7 @@ class MermaidBase:
         display(Image(url="https://mermaid.ink/img/" + base64_string))
 
     @staticmethod
-    def is_notebook():
+    def is_notebook() -> bool:
         """Check if the code is running in a Jupyter notebook."""
         try:
             shell = get_ipython().__class__.__name__  # type: ignore

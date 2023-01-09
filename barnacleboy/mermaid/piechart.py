@@ -16,7 +16,7 @@ class Piechart(MermaidBase):
         super(Piechart, self).__init__(**kwargs)
         self.title = title
         self.data = data
-        self.config = {}
+        self.config = {}  # type: ignore
 
     def get_piechart_string(self) -> str:
         """Get a string representation of the object."""

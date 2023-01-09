@@ -69,7 +69,7 @@ class UserJourney(MermaidBase):
         super(UserJourney, self).__init__(**kwargs)
         self.title = title
         self.sections = sections if sections else []
-        self.config = {}
+        self.config = {}  # type: ignore
 
     def add_section(self, title: str, tasks: Optional[List[Task]] = None) -> None:
         """Add a section to the user journey.

@@ -117,7 +117,7 @@ class EntityRelationDiagram(MermaidBase):
         super(EntityRelationDiagram, self).__init__(**kwargs)
         self.entities = entities if entities else []
         self.relationships = relationships if relationships else []
-        self.config = {}
+        self.config = {}  # type: ignore
 
     def add_entity(self, *args: Any, **kwargs: Any) -> None:
         """Add an entity to the diagram.

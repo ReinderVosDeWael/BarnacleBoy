@@ -49,7 +49,7 @@ def generate_internal_ids(n_nodes: int) -> Generator[str, None, None]:
         yield "".join(characters)
 
 
-def init_string(base_config, object_config):
+def init_string(base_config: dict, object_config: dict) -> str:
     """Generate the mermaid init.
 
     Args:

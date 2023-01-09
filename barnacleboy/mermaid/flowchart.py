@@ -175,7 +175,7 @@ class Flowchart(MermaidBase):
         self.subgraphs = subgraphs or []
         self.orientation = orientation
         self.title = title
-        self.config = {}
+        self.config = {}  # type: ignore
 
         self.set_internal_ids()
 
