@@ -25,7 +25,7 @@ def test_create_relationship():
 
 def test_flowchart():
     """Test the flowchart class."""
-    flowchart = Flowchart()
+    flowchart = Flowchart(primaryColor="#ffffff", secondaryColor="#ffffff")
     anakin = flowchart.create_node("Anakin Skywalker")
     vader = flowchart.create_node("Darth Vader")
     relationship = flowchart.create_relationship(
@@ -38,7 +38,7 @@ def test_flowchart():
 
     assert (
         str(flowchart)
-        == "graph TB\n    A(Anakin Skywalker)\n    B(Darth Vader)\n\n    A---|Turns to the dark side|B\n"
+        == "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ffffff', 'secondaryColor': '#ffffff'}}}%%\ngraph TB\n    A(Anakin Skywalker)\n    B(Darth Vader)\n\n    A---|Turns to the dark side|B\n"
     )
 
 
@@ -62,7 +62,8 @@ def test_flowchart_with_subgraph():
     assert flowchart.relationships == [relationship]
     assert flowchart.orientation == "TB"
     assert flowchart.subgraphs == [dark_subgraph, light_subgraph, all_subgraph]
+
     assert (
         str(flowchart)
-        == "graph TB\n    subgraph G [All]\ndirection TB\nsubgraph E [The Dark Side]\ndirection TB\nB(Darth Vader)\nC(Darth Sidious)\nend\n\nsubgraph F [The Light Side]\ndirection TB\nA(Anakin Skywalker)\nD(Obi-Wan Kenobi)\nend\n\nend\n\n\n    A---|Turns to the dark side|B\n"
+        == "%%{init: {'theme': 'base'}}%%\ngraph TB\n    subgraph G [All]\ndirection TB\nsubgraph E [The Dark Side]\ndirection TB\nB(Darth Vader)\nC(Darth Sidious)\nend\n\nsubgraph F [The Light Side]\ndirection TB\nA(Anakin Skywalker)\nD(Obi-Wan Kenobi)\nend\n\nend\n\n\n    A---|Turns to the dark side|B\n"
     )

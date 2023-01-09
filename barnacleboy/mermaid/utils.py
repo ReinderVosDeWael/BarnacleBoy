@@ -47,3 +47,20 @@ def generate_internal_ids(n_nodes: int) -> Generator[str, None, None]:
         if idx >= n_nodes:
             break
         yield "".join(characters)
+
+
+def init_string(base_config: dict, object_config: dict) -> str:
+    """Generate the mermaid init.
+
+    Args:
+        base_config: The configuration of MermaidBase.
+        object_config: The configuration for the object.
+
+    Returns:
+        A string representation of the object.
+
+    """
+    config = base_config.copy()
+    config.update(object_config)
+    config_string = f"%%{str(config)}%%\n"
+    return config_string.replace("'init'", "init")

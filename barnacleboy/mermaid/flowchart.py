@@ -1,10 +1,12 @@
 """ Module for building mermaid flowcharts. """
-import dataclasses
 from enum import Enum
 from typing import List, Optional, Any, Union
 
 from barnacleboy.mermaid.base import MermaidBase
-from barnacleboy.mermaid.utils import generate_internal_ids
+from barnacleboy.mermaid.utils import (
+    generate_internal_ids,
+    init_string,
+)
 
 
 class Orientation(Enum):
@@ -49,21 +51,23 @@ class NodeShape(Enum):
     DOUBLE_CIRCLE: str = "((($1)))"
 
 
-@dataclasses.dataclass
 class Node:
-    """A node in a flowchart.
+    """A node in a flowchart."""
 
-    Args:
-        name: The name of the node.
-        shape: The shape of the node.
+    def __init__(self, name: str, shape: NodeShape = NodeShape.ROUNDED):
+        """Initialize a node.
 
-    """
+        Args:
+            name: The name of the node.
+            shape: The shape of the node.
 
-    name: str
-    shape: NodeShape = NodeShape.ROUNDED
-    _internal_id: str = ""
+        """
+        self.name = name
+        self.shape = shape
+        self._internal_id: str = ""
 
     def __str__(self) -> str:
+        """The string representation of the node."""
         return self._internal_id + self.shape.value.replace("$1", self.name)
 
 
@@ -113,7 +117,7 @@ class Relationship:
         """Initialize a relationship.
 
         Args:
-            entities: The entities/subgraphs to connect.
+            entities: The entities to connect.
             style: The style of the relationship.
             input_arrow: The input arrow, valid values are "<", "o", "x"
             output_arrow: The output arrow, valid values are ">", "o", "x"
@@ -126,7 +130,7 @@ class Relationship:
         self.label = label
 
         if len(self.entities) != 2:
-            raise ValueError("A relationship must have exactly two entities.")
+            raise ValueError("A relationship must have exactly two nodes.")
 
     def __str__(self) -> str:
         """Generate a relationship string."""
@@ -154,21 +158,24 @@ class Flowchart(MermaidBase):
         subgraphs: Optional[List[Subgraph]] = None,
         orientation: str = Orientation.TB.value,
         title: Optional[str] = None,
+        **kwargs: Any,
     ):
         """Initialize a flowchart.
 
         Args:
-            nodes: A list of entities in the flowchart.
+            nodes: A list of nodes in the flowchart.
             relationships: A list of relationships between entities in the flowchart.
             orientation: The orientation of the flowchart, defaults to "TB".
             title: The title of the flowchart.
 
         """
+        super(Flowchart, self).__init__(**kwargs)
         self.nodes = nodes or []
         self.relationships = relationships or []
         self.subgraphs = subgraphs or []
         self.orientation = orientation
         self.title = title
+        self.config = {}  # type: ignore
 
         self.set_internal_ids()
 
@@ -240,9 +247,6 @@ class Flowchart(MermaidBase):
 
         """
         for relationship in relationships:
-            if len(relationship.entities) != 2:
-                raise ValueError("A relationship must have exactly two entities.")
-
             for node in relationship.entities:
                 if node not in self.nodes:
                     raise ValueError(
@@ -270,7 +274,7 @@ class Flowchart(MermaidBase):
 
     def get_flowchart_string(self) -> str:
         """Generate a flowchart string."""
-        output_string = ""
+        output_string = init_string(self.base_config, self.config)
         if self.title:
             output_string += f"---\ntitle: {self.title}\n---\n"
         output_string += f"graph {self.orientation}\n"

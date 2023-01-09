@@ -35,5 +35,5 @@ def test_user_journey():
 
     assert (
         str(user_journey)
-        == "journey\ntitle Original Trilogy\nsection Return of the Jedi\nUse the force: 5: Leia, Luke\n"
+        == "%%{init: {'theme': 'base'}}%%\njourney\ntitle Original Trilogy\nsection Return of the Jedi\nUse the force: 5: Leia, Luke\n"
     )

@@ -1,8 +1,9 @@
 """ Mermaid diagrams for User Journeys. """
 import dataclasses
-from typing import Optional, List
+from typing import Any, Optional, List
 
 from barnacleboy.mermaid.base import MermaidBase
+from barnacleboy.mermaid.utils import init_string
 
 
 @dataclasses.dataclass
@@ -31,7 +32,7 @@ class Section:
         self.title = title
         self.tasks = tasks if tasks else []
 
-    def add_task(self, description: str, rating: int, people: list[str]) -> None:
+    def add_task(self, description: str, rating: int, people: List[str]) -> None:
         """Append a task to the section.
 
         Args:
@@ -55,15 +56,20 @@ class Section:
 class UserJourney(MermaidBase):
     """A user journey model."""
 
-    def __init__(self, title: str, sections: Optional[List[Section]] = None):
+    def __init__(
+        self, title: str, sections: Optional[List[Section]] = None, **kwargs: Any
+    ) -> None:
         """Initialize a user journey.
 
         Args:
             title: The title of the user journey.
             sections: A list of sections in the user journey.
+            kwargs: Additional keyword arguments to be passed to the MermaidBase class.
         """
+        super(UserJourney, self).__init__(**kwargs)
         self.title = title
         self.sections = sections if sections else []
+        self.config = {}  # type: ignore
 
     def add_section(self, title: str, tasks: Optional[List[Task]] = None) -> None:
         """Add a section to the user journey.
@@ -74,13 +80,11 @@ class UserJourney(MermaidBase):
         """
         self.sections.append(Section(title, tasks))
 
-    def get_user_journey_string(self) -> str:
+    def __str__(self) -> str:
         """Get a string representation of the object."""
-        output_string = "journey\n"
+        output_string = init_string(self.base_config, self.config)
+        output_string += "journey\n"
         output_string += f"title {self.title}\n"
         for section in self.sections:
             output_string += str(section)
         return output_string
-
-    def __str__(self) -> str:
-        return self.get_user_journey_string()
