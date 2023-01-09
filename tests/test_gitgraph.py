@@ -2,23 +2,17 @@ from barnacleboy.mermaid.gitgraph import GitGraph
 
 
 def test_commit():
-    git = GitGraph()
+    git = GitGraph(theme="dark")
     git.commit(id="ZERO")
 
-    assert (
-        str(git)
-        == "%%{'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': True, 'showCommitLabel': True, 'rotateCommitLabel': True, 'mainBranch': 'main', 'mainBranchOrder': 0}}%%\ngitGraph\ncommit id: \"ZERO\"\n"
-    )
+    assert str(git) == "%%{init: {'theme': 'dark'}}%%\ngitGraph\ncommit id: \"ZERO\"\n"
 
 
 def test_branch():
     git = GitGraph()
     git.branch("develop")
 
-    assert (
-        str(git)
-        == "%%{'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': True, 'showCommitLabel': True, 'rotateCommitLabel': True, 'mainBranch': 'main', 'mainBranchOrder': 0}}%%\ngitGraph\nbranch develop\n"
-    )
+    assert str(git) == "%%{init: {'theme': 'base'}}%%\ngitGraph\nbranch develop\n"
 
 
 def test_checkout():
@@ -28,7 +22,7 @@ def test_checkout():
 
     assert (
         str(git)
-        == "%%{'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': True, 'showCommitLabel': True, 'rotateCommitLabel': True, 'mainBranch': 'main', 'mainBranchOrder': 0}}%%\ngitGraph\nbranch develop\ncheckout develop\n"
+        == "%%{init: {'theme': 'base'}}%%\ngitGraph\nbranch develop\ncheckout develop\n"
     )
 
 
@@ -42,7 +36,7 @@ def test_merge():
 
     assert (
         str(git)
-        == "%%{'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': True, 'showCommitLabel': True, 'rotateCommitLabel': True, 'mainBranch': 'main', 'mainBranchOrder': 0}}%%\ngitGraph\ncommit\nbranch develop\ncommit\ncheckout main\nmerge develop\n"
+        == "%%{init: {'theme': 'base'}}%%\ngitGraph\ncommit\nbranch develop\ncommit\ncheckout main\nmerge develop\n"
     )
 
 
@@ -64,5 +58,5 @@ def test_cherry_pick():
 
     assert (
         str(git)
-        == "%%{'logLevel': 'debug', 'theme': 'base', 'gitGraph': {'showBranches': True, 'showCommitLabel': True, 'rotateCommitLabel': True, 'mainBranch': 'main', 'mainBranchOrder': 0}}%%\ngitGraph\ncommit id: \"ZERO\"\nbranch develop\ncommit id: \"A\"\ncommit id: \"B\"\ncheckout main\ncherry-pick id:\"A\"\n"
+        == '%%{init: {\'theme\': \'base\'}}%%\ngitGraph\ncommit id: "ZERO"\nbranch develop\ncommit id: "A"\ncommit id: "B"\ncheckout main\ncherry-pick id:"A"\n'
     )

@@ -7,7 +7,7 @@ from barnacleboy.mermaid.er_diagram import (
 
 def test_entity_relation_diagram():
     """Test the entity relation diagram class."""
-    er_diagram = EntityRelationDiagram()
+    er_diagram = EntityRelationDiagram(theme="forest")
     er_diagram.add_entity(
         "Person",
         [Field("string", "name", "test", primary_key=True), Field("int", "age")],
@@ -25,5 +25,5 @@ def test_entity_relation_diagram():
 
     assert (
         str(er_diagram)
-        == 'erDiagram\nPerson {\n  string name PK "test"\n  int age\n}\n\nCar {\n  string make\n  string person_id FK\n}\n\nPerson||--o{Car : owns\n'
+        == "%%{init: {'theme': 'forest'}}%%\nerDiagram\nPerson {\n  string name PK \"test\"\n  int age\n}\n\nCar {\n  string make\n  string person_id FK\n}\n\nPerson||--o{Car : owns\n"
     )

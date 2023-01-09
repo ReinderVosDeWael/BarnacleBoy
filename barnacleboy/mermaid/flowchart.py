@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List, Optional, Any
 
 from barnacleboy.mermaid.base import MermaidBase
-from barnacleboy.mermaid.utils import generate_node_ids
+from barnacleboy.mermaid.utils import generate_node_ids, init_string
 
 
 class Orientation(Enum):
@@ -138,6 +138,7 @@ class Flowchart(MermaidBase):
         relationships: Optional[List[Relationship]] = None,
         orientation: Orientation = Orientation.TB,
         title: Optional[str] = None,
+        **kwargs: Any,
     ):
         """Initialize a flowchart.
 
@@ -148,10 +149,12 @@ class Flowchart(MermaidBase):
             title: The title of the flowchart.
 
         """
+        super(Flowchart, self).__init__(**kwargs)
         self.nodes = nodes or []
         self.relationships = relationships or []
         self.orientation = orientation
         self.title = title
+        self.config = {}
 
         self.set_node_ids()
 
@@ -221,7 +224,7 @@ class Flowchart(MermaidBase):
 
     def get_flowchart_string(self) -> str:
         """Generate a flowchart string."""
-        output_string = ""
+        output_string = init_string(self.base_config, self.config)
         if self.title:
             output_string += f"---\ntitle: {self.title}\n---\n"
         output_string += f"graph {self.orientation.value}\n"
@@ -237,4 +240,5 @@ class Flowchart(MermaidBase):
         return output_string
 
     def __str__(self) -> str:
+        """Return the flowchart string."""
         return self.get_flowchart_string()

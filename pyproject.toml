@@ -1,16 +1,23 @@
 [tool.poetry]
-name = "barnacleboy"
+name = "BarnacleBoy"
 version = "0.0.1.alpha"
 description = ""
 authors = ["Reinder Vos de Wael <reinder.vosdewael@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
-pytest-cov = "^4.0.0"
+python = "^3.8"
+matplotlib = "^3.6.2"
+jupyter = "^1.0.0"
+pydantic = "^1.10.4"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+sphinx = "^6.1.2"
+sphinx-autoapi = "^2.0.0"
+jupyter = "^1.0.0"
+nbsphinx = "^0.8.11"
 
 [build-system]
 requires = ["poetry-core"]

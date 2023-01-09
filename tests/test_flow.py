@@ -26,7 +26,7 @@ def test_create_relationship():
 
 def test_flowchart():
     """Test the flowchart class."""
-    flowchart = Flowchart()
+    flowchart = Flowchart(primaryColor="#ffffff", secondaryColor="#ffffff")
     anakin = flowchart.create_node("Anakin Skywalker")
     vader = flowchart.create_node("Darth Vader")
     relationship = flowchart.create_relationship(
@@ -39,5 +39,5 @@ def test_flowchart():
 
     assert (
         str(flowchart)
-        == "graph TB\n    A(Anakin Skywalker)\n    B(Darth Vader)\n\n    A---|Turns to the dark side|B\n"
+        == "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#ffffff', 'secondaryColor': '#ffffff'}}}%%\ngraph TB\n    A(Anakin Skywalker)\n    B(Darth Vader)\n\n    A---|Turns to the dark side|B\n"
     )

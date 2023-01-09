@@ -1,7 +1,8 @@
 import dataclasses
-from typing import Optional, List, Union
+from typing import Optional, List, Union, Any
 
 from barnacleboy.mermaid.base import MermaidBase
+from barnacleboy.mermaid.utils import init_string
 
 VALID_COMMIT_TYPES = {"NORMAL", "REVERSE", "HIGHLIGHT"}
 VALID_THEMES = {"base", "forest", "dark", "default", "neutral"}
@@ -84,8 +85,8 @@ class GitGraph(MermaidBase):
         rotate_commit_label: bool = True,
         main_branch_name: str = "main",
         main_branch_order: int = 0,
-        theme: str = "base",
-    ):
+        **kwargs: Any,
+    ) -> None:
         """Create a git graph.
 
         Args:
@@ -94,8 +95,9 @@ class GitGraph(MermaidBase):
             rotate_commit_label: Whether to rotate commit labels.
             main_branch_name: The name of the main branch.
             main_branch_order: The order of the main branch.
-            theme: The theme of the graph, can be "base", "forest", "dark", "default", or "neutral".
+            kwargs: The kwargs to pass to the MermaidBase class.
         """
+        super(GitGraph, self).__init__(**kwargs)
         self.log: List[Union[MergeCommit, Branch, str]] = []
         self.commits: List[Commit] = []
         self.branches = [Branch("main")]
@@ -104,10 +106,7 @@ class GitGraph(MermaidBase):
         self.rotate_commit_label = rotate_commit_label
         self.main_branch_name = main_branch_name
         self.main_branch_order = main_branch_order
-
-        if theme.lower() not in VALID_THEMES:
-            raise ValueError(f"Invalid theme: {theme}")
-        self.theme = theme.lower()
+        self.config = {}
 
     def commit(
         self,
@@ -210,24 +209,10 @@ class GitGraph(MermaidBase):
                 return
         raise ValueError(f"Commit {commit_id} does not exist")
 
-    def get_gitgraph_string(self) -> str:
+    def __str__(self) -> str:
         """Get a string representation of the object."""
-        settings = {
-            "logLevel": "debug",
-            "theme": "base",
-            "gitGraph": {
-                "showBranches": self.show_branches,
-                "showCommitLabel": self.show_commit_label,
-                "rotateCommitLabel": self.rotate_commit_label,
-                "mainBranch": self.main_branch_name,
-                "mainBranchOrder": self.main_branch_order,
-            },
-        }
-        output_string = f"%%{str(settings)}%%\n"
+        output_string = init_string(self.base_config, self.config)
         output_string += "gitGraph\n"
         for line in self.log:
             output_string += f"{line}\n"
         return output_string
-
-    def __str__(self) -> str:
-        return self.get_gitgraph_string()
