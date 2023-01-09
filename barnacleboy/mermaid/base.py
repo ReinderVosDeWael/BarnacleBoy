@@ -1,6 +1,6 @@
 import base64
 from pathlib import Path
-from typing import Union, Optional, Any
+from typing import Union, Optional, Any, Dict
 
 from pydantic import Field, BaseModel, Extra
 
@@ -57,7 +57,7 @@ class MermaidBase:
         self.theme_variables = ThemeVariables(**kwargs)
 
     @property
-    def base_config(self) -> dict[str, dict[str, str]]:
+    def base_config(self) -> Dict[str, Dict[str, str]]:
         """Get a dictionary representation of the init settings."""
         config = {
             "init": {
