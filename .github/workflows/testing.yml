@@ -23,6 +23,7 @@ jobs:
 
       - name: Test with pytest
         run: |
+          npm install -g @mermaid-js/mermaid-cli
           pip install poetry
           poetry install
           poetry run python3 -m pytest --cov barnacleboy --cov-report xml:coverage.xml .

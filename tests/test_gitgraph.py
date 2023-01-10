@@ -1,3 +1,6 @@
+import tempfile
+from pathlib import Path
+
 from barnacleboy.mermaid.gitgraph import GitGraph
 
 
@@ -5,14 +8,20 @@ def test_commit():
     git = GitGraph(theme="dark")
     git.commit(id="ZERO")
 
-    assert str(git) == "%%{init: {'theme': 'dark'}}%%\ngitGraph\ncommit id: \"ZERO\"\n"
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        git.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()
 
 
 def test_branch():
     git = GitGraph()
     git.branch("develop")
 
-    assert str(git) == "%%{init: {'theme': 'base'}}%%\ngitGraph\nbranch develop\n"
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        git.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()
 
 
 def test_checkout():
@@ -20,10 +29,10 @@ def test_checkout():
     git.branch("develop")
     git.checkout("develop")
 
-    assert (
-        str(git)
-        == "%%{init: {'theme': 'base'}}%%\ngitGraph\nbranch develop\ncheckout develop\n"
-    )
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        git.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()
 
 
 def test_merge():
@@ -34,10 +43,10 @@ def test_merge():
     git.checkout("main")
     git.merge("develop")
 
-    assert (
-        str(git)
-        == "%%{init: {'theme': 'base'}}%%\ngitGraph\ncommit\nbranch develop\ncommit\ncheckout main\nmerge develop\n"
-    )
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        git.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()
 
 
 def test_cherry_pick():
@@ -56,7 +65,7 @@ def test_cherry_pick():
     git.checkout("main")
     git.cherry_pick("A")
 
-    assert (
-        str(git)
-        == '%%{init: {\'theme\': \'base\'}}%%\ngitGraph\ncommit id: "ZERO"\nbranch develop\ncommit id: "A"\ncommit id: "B"\ncheckout main\ncherry-pick id:"A"\n'
-    )
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        git.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()

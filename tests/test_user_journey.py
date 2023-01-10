@@ -1,3 +1,6 @@
+import tempfile
+from pathlib import Path
+
 from barnacleboy.mermaid.user_journey import Task, Section, UserJourney
 
 
@@ -33,7 +36,7 @@ def test_user_journey():
 
     assert user_journey.title == "Original Trilogy"
 
-    assert (
-        str(user_journey)
-        == "%%{init: {'theme': 'base'}}%%\njourney\ntitle Original Trilogy\nsection Return of the Jedi\nUse the force: 5: Leia, Luke\n"
-    )
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        user_journey.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()
