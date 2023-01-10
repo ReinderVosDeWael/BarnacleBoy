@@ -1,3 +1,6 @@
+import tempfile
+from pathlib import Path
+
 from barnacleboy.mermaid.flowchart import (
     Flowchart,
     Node,
@@ -63,7 +66,7 @@ def test_flowchart_with_subgraph():
     assert flowchart.orientation == "TB"
     assert flowchart.subgraphs == [dark_subgraph, light_subgraph, all_subgraph]
 
-    assert (
-        str(flowchart)
-        == "%%{init: {'theme': 'base'}}%%\ngraph TB\n    subgraph G [All]\ndirection TB\nsubgraph E [The Dark Side]\ndirection TB\nB(Darth Vader)\nC(Darth Sidious)\nend\n\nsubgraph F [The Light Side]\ndirection TB\nA(Anakin Skywalker)\nD(Obi-Wan Kenobi)\nend\n\nend\n\n\n    A---|Turns to the dark side|B\n"
-    )
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        flowchart.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()

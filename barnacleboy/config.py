@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     TEMPLATE_DIR: Path = Path(__file__).parent / "templates"
     VALID_THEMES: List[str] = ["default", "forest", "dark", "neutral", "base"]
+    VALID_MERMAID_CLI_EXTENSIONS: List[str] = [".png", ".svg", ".pdf", ".md"]
 
 
 @lru_cache()

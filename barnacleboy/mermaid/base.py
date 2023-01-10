@@ -1,4 +1,7 @@
 import base64
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 from typing import Union, Optional, Any, Dict
 
@@ -9,6 +12,7 @@ from barnacleboy.config import get_settings
 settings = get_settings()
 VALID_THEMES = settings.VALID_THEMES
 TEMPLATE_DIR = settings.TEMPLATE_DIR
+VALID_MERMAID_CLI_EXTENSIONS = settings.VALID_MERMAID_CLI_EXTENSIONS
 
 COLOR_HEX_REGEX = r"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
 
@@ -69,17 +73,6 @@ class MermaidBase:
             config["init"]["themeVariables"] = theme_variables
         return config
 
-    def save_html(self, filename: Union[str, Path]) -> None:
-        filename = Path(filename)
-        template = TEMPLATE_DIR / "mermaid_diagram.html"
-
-        with open(template, "r") as file:
-            html = file.read()
-            html = html.replace("{{GRAPH}}", str(self))
-
-        with open(filename, "w") as file:
-            file.write(html)
-
     def jupyter_plot(self) -> None:
         """Render the graph in a Jupyter notebook.
 
@@ -94,6 +87,54 @@ class MermaidBase:
         base64_bytes = base64.b64encode(graphbytes)
         base64_string = base64_bytes.decode("ascii")
         display(Image(url="https://mermaid.ink/img/" + base64_string))
+
+    def save(self, filename: Union[str, Path]) -> None:
+        """Save the graph to a file.
+
+        Args:
+            filename: The path to save the graph to.
+        """
+        filename = Path(filename)
+        if filename.suffix == ".html":
+            return self.save_html(filename)
+        elif filename.suffix in VALID_MERMAID_CLI_EXTENSIONS:
+            return self.save_image(filename)
+        raise ValueError("File type not supported.")
+
+    def save_html(self, filename: Union[str, Path]) -> None:
+        """Save the graph to an html file.
+
+        Args:
+            filename: The path to save the graph to.
+        """
+        filename = Path(filename)
+        template = TEMPLATE_DIR / "mermaid_diagram.html"
+
+        with open(template, "r") as file:
+            html = file.read()
+            html = html.replace("{{GRAPH}}", str(self))
+
+        with open(filename, "w") as file:
+            file.write(html)
+
+    def save_image(self, filename: Union[str, Path]) -> None:
+        """Save the graph to an image file.
+
+        Args:
+            filename: The path to save the graph to.
+        """
+        if shutil.which("mmdc") is None:
+            raise RuntimeError("Saving images requires mermaid-cli to be installed.")
+
+        with tempfile.NamedTemporaryFile(suffix=".txt") as mermaid_file:
+            mermaid_file.write(str(self).encode())
+            mermaid_file.seek(0)
+
+            exit_code = subprocess.call(
+                ["mmdc", "-i", mermaid_file.name, "-o", str(filename)]
+            )
+            if exit_code != 0:
+                raise RuntimeError("Failed to save graph.")
 
     @staticmethod
     def is_notebook() -> bool:

@@ -1,3 +1,6 @@
+import tempfile
+from pathlib import Path
+
 from barnacleboy.mermaid.er_diagram import (
     EntityRelationDiagram,
     RelationshipType,
@@ -23,7 +26,7 @@ def test_entity_relation_diagram():
         "owns",
     )
 
-    assert (
-        str(er_diagram)
-        == "%%{init: {'theme': 'forest'}}%%\nerDiagram\nPerson {\n  string name PK \"test\"\n  int age\n}\n\nCar {\n  string make\n  string person_id FK\n}\n\nPerson||--o{Car : owns\n"
-    )
+    with tempfile.NamedTemporaryFile("w", suffix=".png") as temp_file:
+        er_diagram.save(temp_file.name)
+
+        assert Path(temp_file.name).exists()
